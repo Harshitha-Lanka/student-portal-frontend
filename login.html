@@ -1,0 +1,121 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login page</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <form class="container" id="form">
+    <h1 class="student">University Portal Login Page</h1>
+    <section>
+      <input type="email" placeholder="Enter your email" id="username" /><br>
+      <p id="username-error" style="color: red; font-size: 13px;"></p>
+      <input type="password" placeholder="Enter Password" id="password" /><br>
+      <p id="password-error" style="color: red; font-size: 13px;"></p>
+      <select id="role">
+        <option value="">Select Role</option>
+        <option value="Student">Student</option>
+        <option value="Faculty">Faculty</option>
+      </select><br>
+      <p id="role-error" style="color: red; font-size: 13px;"></p>
+      <button type="submit">Login</button>
+    </section>
+  </form>
+</body>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("form");
+    const username = document.getElementById("username");
+    const password = document.getElementById("password");
+    const roleSelect = document.getElementById("role");
+    const usernameError = document.getElementById("username-error");
+    const passwordError = document.getElementById("password-error");
+    const roleError = document.getElementById("role-error");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      let isValid = true;
+
+      usernameError.textContent = "";
+      passwordError.textContent = "";
+      roleError.textContent = "";
+
+      if (username.value.trim() === "") {
+        usernameError.textContent = "Enter the username.";
+        isValid = false;
+      }
+      if (password.value.trim() === "") {
+        passwordError.textContent = "Password is required.";
+        isValid = false;
+      }
+      if (roleSelect.value.trim() === "") {
+        roleError.textContent = "Please select your role.";
+        isValid = false;
+      }
+
+      if (!isValid) return;
+
+      const loginData = {
+        email: username.value.trim(),
+        password: password.value.trim(),
+      };
+
+      try {
+        const response = await fetch("http://localhost:8080/api/users/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(loginData),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const userId = data.userId || data.id;
+          const backendRole = data.role?.toLowerCase();
+          const selectedRole = roleSelect.value.trim().toLowerCase();
+
+          if (backendRole !== selectedRole) {
+            alert("❌ Selected role does not match your registered role.");
+            return;
+          }
+
+          console.log("User ID saved:", userId);
+          localStorage.setItem("userId", userId);
+
+          if (backendRole === 'student') {
+            const studentCheck = await fetch(`http://localhost:8080/api/students/byUserId/${userId}`);
+            if (studentCheck.ok) {
+              const student = await studentCheck.json();
+              localStorage.setItem("studentId", student.studentId);
+              window.location.href = "studentdashboard.html";
+            } else {
+              window.location.href = "studentregistration.html";
+            }
+          } else if (backendRole === 'faculty') {
+            const facultyCheck = await fetch(`http://localhost:8080/api/faculty/byUserId/${userId}`);
+            if (facultyCheck.ok) {
+              const faculty = await facultyCheck.json();
+              localStorage.setItem("facultyId", faculty.facultyId);
+              window.location.href = "facultydashboard.html";
+            } else {
+              window.location.href = "facultyregistration.html";
+            }
+          }
+
+        } else {
+          const error = await response.json();
+          alert("\u274C " + error.error);
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        alert("Something went wrong.");
+      }
+    });
+  });
+</script>
+
+</html>

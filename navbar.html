@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Portal Navbar</title>
+  <link rel="stylesheet" href="navbar.css" />
+</head>
+<body>
+
+ 
+  <nav class="navbar">
+    <div class="navbar-container">
+     
+      <a href="#" class="logo">
+        <img src="logo.jpeg" alt="Logo" />
+        <span>Andhra University</span>
+      </a>
+
+  
+      <div class="menu-icon" id="menu-toggle">&#9776;</div>
+
+     
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Courses</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+
+    
+      <div class="auth-buttons">
+        <a href="signup.html" class="btn btn-outline">Signup</a>
+        <a href="login.html" class="btn btn-filled">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <script>
+    const menuToggle = document.getElementById('menu-toggle');
+    const navLinks = document.getElementById('nav-links');
+
+    menuToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('show');
+    });
+  </script>
+
+</body>
+</html>

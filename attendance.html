@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mark Attendance</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #121212; color: white; padding: 30px; }
+    .card { background-color: #1e1e1e; border: none; color: white; }
+    .form-select, .form-control { background-color: #242424; color: white; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 class="mb-4">📋 Mark Attendance</h2>
+
+    <div class="mb-3">
+      <label for="attendanceDate" class="form-label">Select Date</label>
+      <input type="date" class="form-control" id="attendanceDate" />
+    </div>
+
+    <div class="mb-3">
+      <label for="courseDropdown" class="form-label">Select Course</label>
+      <select class="form-select" id="courseDropdown"></select>
+    </div>
+
+    <div id="studentListContainer"></div>
+
+    <button class="btn btn-success mt-3" onclick="submitAttendance()">✅ Submit Attendance</button>
+  </div>
+
+  <script>
+    const facultyId = localStorage.getItem("facultyId"); // retrieved from login
+
+    // Load courses for faculty
+    async function loadCourses() {
+      const response = await fetch(`http://localhost:8080/api/courses/byFacultyId/${facultyId}`);
+      const data = await response.json();
+      const dropdown = document.getElementById("courseDropdown");
+      dropdown.innerHTML = `<option selected disabled>-- Select Course --</option>`;
+      data.forEach(course => {
+        dropdown.innerHTML += `<option value="${course.id}">${course.courseName} (${course.courseCode})</option>`;
+      });
+    }
+
+    // Load students when course selected
+    document.getElementById("courseDropdown").addEventListener("change", async function () {
+      const courseId = this.value;
+      const response = await fetch(`http://localhost:8080/api/enrollments/studentsByCourse/${courseId}`);
+      const students = await response.json();
+      renderStudentCheckboxes(students);
+    });
+
+    function renderStudentCheckboxes(students) {
+      let html = `<table class="table table-dark table-bordered mt-4"><thead><tr><th>Student ID</th><th>Name</th><th>Present</th></tr></thead><tbody>`;
+      students.forEach(s => {
+        html += `<tr>
+          <td>${s.studentId}</td>
+          <td>${s.name}</td>
+          <td><input type="checkbox" class="presentCheckbox" data-student-id="${s.studentId}" checked></td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+      document.getElementById("studentListContainer").innerHTML = html;
+    }
+
+    async function submitAttendance() {
+      const date = document.getElementById("attendanceDate").value;
+      const courseId = document.getElementById("courseDropdown").value;
+      const checkboxes = document.querySelectorAll(".presentCheckbox");
+
+      const attendanceData = Array.from(checkboxes).map(cb => ({
+        studentId: cb.dataset.studentId,
+        courseId: courseId,
+        date: date,
+        present: cb.checked
+      }));
+
+      const response = await fetch("http://localhost:8080/api/attendance/mark", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(attendanceData)
+      });
+
+      if (response.ok) {
+        alert("✅ Attendance submitted successfully.");
+      } else {
+        alert("❌ Failed to submit attendance.");
+      }
+    }
+
+    loadCourses();
+  </script>
+</body>
+</html>

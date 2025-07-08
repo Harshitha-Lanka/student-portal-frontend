@@ -1,0 +1,86 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  background: url('andhra.jpg') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.4); 
+  z-index: -1;
+}
+.container {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+ 
+  padding: 30px 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  width: 420px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+ 
+}
+.student {
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: white;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px #000;
+}
+input[type="email"],
+input[type="password"],
+select {
+  width: 100%;
+  padding: 14px;
+  margin: 12px 0 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 8px #007BFF;
+  outline: none;
+}
+button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(to right, #000000, #333333);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+button:hover {
+  background: linear-gradient(to right, #222222, #555555);
+  transform: scale(1.02);
+}
+
+

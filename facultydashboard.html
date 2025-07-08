@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Faculty Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+    }
+    .sidebar {
+      background-color: #1e1e1e;
+      padding: 20px;
+      height: 100vh;
+    }
+    .main-content {
+      background-color: #1a1a1a;
+      padding: 30px;
+      border-radius: 10px;
+    }
+    .card {
+      background-color: #242424;
+      color: white;
+      border: none;
+    }
+    .table {
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-3 sidebar">
+      <h4 id="sidebarName">Welcome, Faculty</h4>
+      <hr class="text-secondary">
+      <ul class="nav flex-column">
+        <li class="nav-item"><a href="#" class="nav-link text-light">Profile</a></li>
+        <li class="nav-item"><a href="add-course.html" class="nav-link text-light">Add Course</a></li>
+        <li class="nav-item"><a href="attendance.html" class="nav-link text-light">Mark Attendance</a></li>
+        <li class="nav-item"><a href="marks.html" class="nav-link text-light">Marks Entry</a></li>
+        <li class="nav-item"><a href="#" class="nav-link text-light">Announcements</a></li>
+        <li class="nav-item"><a href="#" class="nav-link text-light">Settings</a></li>
+     <li class="nav-item"><a href="#" class="nav-link text-danger" id="logoutBtn">Logout</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-9 main-content">
+      <h2 class="mb-4">Faculty Dashboard</h2>
+
+      <!-- Profile Summary -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Profile Overview</h5>
+          <p>Name: <span id="facultyName">Loading...</span></p>
+          <p>Faculty ID: <span id="facultyId">Loading...</span></p>
+          <p>Department: <span id="department">Loading...</span></p>
+          <p>Email: <span id="email">Loading...</span></p>
+          <p>Phone: <span id="phone">Loading...</span></p>
+        </div>
+      </div>
+
+      <!-- Courses Handled -->
+     <div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title">Courses You Handle</h5>
+    <table class="table table-dark table-hover">
+      <thead>
+        <tr>
+          <th>Course Name</th>
+          <th>Batch</th>
+          <th>Schedule</th>
+        </tr>
+      </thead>
+      <tbody id="handledCoursesBody">
+        <!-- Filled dynamically from backend -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+      <!-- Student Attendance Section -->
+     
+
+      <!-- Marks Entry Section -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Marks Entry</h5>
+          <p><a href="#" class="btn btn-outline-light btn-sm">Enter/Update Student Marks</a></p>
+        </div>
+      </div>
+
+      <!-- Announcements -->
+      <h5 class="card-title d-flex justify-content-between align-items-center" id="notice">
+  Your Recent Announcements
+  <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#addNoticeModal">➕ Add Notice</button>
+</h5>
+
+<ul id="facultyNoticesList">
+  <li>Loading your announcements...</li>
+</ul>
+
+<!-- Modal for Adding Notice -->
+<div class="modal fade" id="addNoticeModal" tabindex="-1" aria-labelledby="addNoticeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" id="noticeForm">
+      <div class="modal-header">
+        <h5 class="modal-title text-black" id="addNoticeModalLabel ">Add New Notice</h5>
+        <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="noticeTitle" class="form-label text-black">Title</label>
+          <input type="text" class="form-control" id="noticeTitle" required>
+        </div>
+        <div class="mb-3">
+          <label for="noticeDesc" class="form-label text-black">Description</label>
+          <textarea class="form-control" id="noticeDesc" rows="3" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn hover-black">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", async function () {
+    const facultyId = localStorage.getItem("facultyId");
+    if (!facultyId) return;
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/faculty/byFacultyId/${facultyId}`);
+      if (response.ok) {
+        const faculty = await response.json();
+        document.getElementById("facultyName").textContent = faculty.facultyName;
+        document.getElementById("facultyId").textContent = faculty.facultyId;
+        document.getElementById("department").textContent = faculty.department;
+        document.getElementById("email").textContent = faculty.email;
+        document.getElementById("phone").textContent = faculty.phone;
+        document.getElementById("sidebarName").textContent = `Welcome, Prof. ${faculty.facultyName}`;
+      }
+    } catch (err) {
+      console.error("Failed to load faculty details", err);
+    }
+  });
+  const facultyId = localStorage.getItem("facultyId");
+
+  async function loadHandledCourses() {
+    const response = await fetch(`http://localhost:8080/api/courses/byFacultyId/${facultyId}`);
+    const courses = await response.json();
+
+    const tableBody = document.getElementById("handledCoursesBody");
+    tableBody.innerHTML = "";
+
+    courses.forEach(course => {
+      const row = `
+        <tr>
+          <td>${course.courseName}</td>
+          <td>2023-27</td>
+          <td>${course.courseCode === "CS305" ? "Mon & Wed" : "Tue & Fri"}</td>
+        </tr>
+      `;
+      tableBody.innerHTML += row;
+    });
+  }
+
+  window.onload = loadHandledCourses;
+
+  document.getElementById("noticeForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const facultyId = localStorage.getItem("facultyId");
+    const title = document.getElementById("noticeTitle").value.trim();
+    const description = document.getElementById("noticeDesc").value.trim();
+
+    if (!title || !description) {
+      alert("⚠️ Please fill in all fields.");
+      return;
+    }
+
+    const response = await fetch("http://localhost:8080/api/notices", {
+     
+
+      method: "POST",
+      
+      headers: {
+        "Content-Type": "application/json"
+      },
+      
+      body: JSON.stringify({
+        title,
+        description,
+        faculty: { facultyId }
+      })
+    });
+
+    if (response.ok) {
+      alert("✅ Notice posted successfully!");
+      console.log("Deleting notice ID:", noticeId);
+
+      document.getElementById("noticeForm").reset();
+      const modal = bootstrap.Modal.getInstance(document.getElementById('addNoticeModal'));
+      modal.hide(); // close the modal
+      loadFacultyNotices(); // refresh the notice list
+    } else {
+      const errorText = await response.text();
+      alert("❌ Failed to post notice: " + errorText);
+    }
+  });
+
+  // Load notices when page loads
+  window.addEventListener("load", loadFacultyNotices);
+
+  async function deleteNotice(noticeId) {
+  if (!confirm("Are you sure you want to delete this notice?")) return;
+
+  try {
+    const response = await fetch(`http://localhost:8080/api/notices/${noticeId}`, {
+      method: "DELETE"
+    });
+
+    if (response.ok) {
+      alert("🗑 Notice deleted successfully!");
+      loadFacultyNotices(); // refresh list
+    } else {
+      alert("❌ Failed to delete notice.");
+    }
+  } catch (error) {
+    console.error("Error deleting notice:", error);
+    alert("❌ Error occurred while deleting.");
+  }
+} 
+
+
+  
+async function loadFacultyNotices() {
+    try {
+      const response = await fetch("http://localhost:8080/api/notices");
+      const notices = await response.json();
+
+      const list = document.getElementById("facultyNoticesList");
+      list.innerHTML = "";
+
+      const facultyId = localStorage.getItem("facultyId");
+
+      const facultyNotices = notices.filter(notice => notice.faculty && notice.faculty.facultyId == facultyId);
+
+      if (facultyNotices.length === 0) {
+        list.innerHTML = "<li>No recent announcements</li>";
+        return;
+      }
+
+      facultyNotices.forEach(notice => {
+        const item = document.createElement("li");
+        item.innerHTML = `
+          📢 <strong>${notice.title}</strong> – ${notice.description}
+          <button class="btn btn-sm btn-danger float-end" onclick="deleteNotice(${notice.id})">🗑</button>
+        `;
+        list.appendChild(item);
+      });
+
+    } catch (error) {
+      console.error("Error loading faculty notices:", error);
+      document.getElementById("facultyNoticesList").innerHTML = "<li>Failed to load announcements</li>";
+    }
+  }
+  document.getElementById("logoutBtn").addEventListener("click", function (e) {
+  e.preventDefault(); // prevent default anchor behavior
+  localStorage.clear(); // remove all session data
+  window.location.href = "login.html"; // redirect to login
+});
+
+</script>
+
+
+
+</body>
+</html>
