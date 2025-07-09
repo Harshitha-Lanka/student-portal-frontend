@@ -141,7 +141,7 @@
     if (!facultyId) return;
 
     try {
-      const response = await fetch(`http://localhost:8080/api/faculty/byFacultyId/${facultyId}`);
+      const response = await fetch(`https://student-portal-backend-3fsy.onrender.com/api/faculty/byFacultyId/${facultyId}`);
       if (response.ok) {
         const faculty = await response.json();
         document.getElementById("facultyName").textContent = faculty.facultyName;
@@ -158,7 +158,7 @@
   const facultyId = localStorage.getItem("facultyId");
 
   async function loadHandledCourses() {
-    const response = await fetch(`http://localhost:8080/api/courses/byFacultyId/${facultyId}`);
+    const response = await fetch(`https://student-portal-backend-3fsy.onrender.com/api/courses/byFacultyId/${facultyId}`);
     const courses = await response.json();
 
     const tableBody = document.getElementById("handledCoursesBody");
@@ -190,7 +190,7 @@
       return;
     }
 
-    const response = await fetch("http://localhost:8080/api/notices", {
+    const response = await fetch("https://student-portal-backend-3fsy.onrender.com/api/notices", {
      
 
       method: "POST",
@@ -227,7 +227,7 @@
   if (!confirm("Are you sure you want to delete this notice?")) return;
 
   try {
-    const response = await fetch(`http://localhost:8080/api/notices/${noticeId}`, {
+    const response = await fetch(`https://student-portal-backend-3fsy.onrender.com/api/notices/${noticeId}`, {
       method: "DELETE"
     });
 
@@ -247,7 +247,7 @@
   
 async function loadFacultyNotices() {
     try {
-      const response = await fetch("http://localhost:8080/api/notices");
+      const response = await fetch("https://student-portal-backend-3fsy.onrender.com/api/notices");
       const notices = await response.json();
 
       const list = document.getElementById("facultyNoticesList");

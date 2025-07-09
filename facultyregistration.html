@@ -139,7 +139,7 @@ document.getElementById('facultyForm').addEventListener('submit', async function
   };
 
   try {
-    const response = await fetch("http://localhost:8080/api/faculty", {
+    const response = await fetch("https://student-portal-backend-3fsy.onrender.com/api/faculty", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(facultyData),
