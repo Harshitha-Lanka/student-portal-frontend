@@ -47,7 +47,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    fetch("https://student-portal-backend-3fsy.onrender.com/api/courses")
+    fetch("http://localhost:8080/api/courses")
       .then(response => response.json())
       .then(courses => {
         const courseBody = document.getElementById("courseBody");

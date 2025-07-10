@@ -68,54 +68,69 @@
   }
 
   async function loadCourses() {
-    const res = await fetch("https://student-portal-backend-3fsy.onrender.com/api/courses");
-    const courses = await res.json();
-    const courseSelect = document.getElementById("courseSelect");
+    try {
+      const res = await fetch("http://localhost:8080/api/courses");
+      const courses = await res.json();
+      const courseSelect = document.getElementById("courseSelect");
 
-    courseSelect.innerHTML = '<option selected disabled>Select a course</option>';
-    courses.forEach(course => {
-      const option = document.createElement("option");
-      option.value = course.id;
-      option.textContent = `${course.courseName} (${course.courseCode})`;
-      courseSelect.appendChild(option);
-    });
+      courseSelect.innerHTML = '<option selected disabled>Select a course</option>';
+      courses.forEach(course => {
+        const option = document.createElement("option");
+        option.value = course.courseId;  // ⬅️ Use course.courseId instead of course.id
+        option.textContent = `${course.courseName} (${course.courseCode})`;
+        courseSelect.appendChild(option);
+      });
+    } catch (err) {
+      console.error("Error loading courses:", err);
+    }
   }
 
   async function loadEnrolledCourses() {
-    const res = await fetch(`https://student-portal-backend-3fsy.onrender.com/api/enrollments/student/${studentId}`);
-    const enrollments = await res.json();
-    const list = document.getElementById("enrolledList");
-    list.innerHTML = "";
+    try {
+      const res = await fetch(`http://localhost:8080/api/enrollments/student/${studentId}`);
+      const enrollments = await res.json();
+      const list = document.getElementById("enrolledList");
+      list.innerHTML = "";
 
-    enrollments.forEach(enroll => {
-      const li = document.createElement("li");
-      li.className = "list-group-item text-white";
-      li.textContent = `${enroll.course.courseName} (${enroll.course.courseCode})`;
-      list.appendChild(li);
-    });
+      enrollments.forEach(enroll => {
+        const li = document.createElement("li");
+        li.className = "list-group-item text-white";
+        li.textContent = `${enroll.course.courseName} (${enroll.course.courseCode})`;
+        list.appendChild(li);
+      });
+    } catch (err) {
+      console.error("Error loading enrolled courses:", err);
+    }
   }
 
   document.getElementById("enrollmentForm").addEventListener("submit", async function (e) {
     e.preventDefault();
     const courseId = document.getElementById("courseSelect").value;
-
-    const response = await fetch("https://student-portal-backend-3fsy.onrender.com/api/enrollments", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        studentId: studentId,
-        courseId: courseId
-      })
-    });
-
     const statusMessage = document.getElementById("statusMessage");
-    if (response.ok) {
-      statusMessage.innerHTML = `<div class="alert alert-success">✅ Enrolled successfully!</div>`;
-      await loadEnrolledCourses(); // refresh list
-    } else {
-      statusMessage.innerHTML = `<div class="alert alert-danger">❌ Enrollment failed. You may already be enrolled.</div>`;
+
+    try {
+      const response = await fetch("http://localhost:8080/api/enrollments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          studentId: studentId,
+          courseId: courseId
+        })
+      });
+
+      if (response.ok) {
+        statusMessage.innerHTML = `<div class="alert alert-success">✅ Enrolled successfully!</div>`;
+        await loadEnrolledCourses(); // refresh list
+      } else {
+        const errorText = await response.text();  // ✅ read full error from backend
+        statusMessage.innerHTML = `<div class="alert alert-danger">❌ ${errorText}</div>`;
+        console.error("Enrollment failed:", errorText);
+      }
+    } catch (err) {
+      statusMessage.innerHTML = `<div class="alert alert-danger">❌ Enrollment request failed. Try again.</div>`;
+      console.error("Network error:", err);
     }
   });
 

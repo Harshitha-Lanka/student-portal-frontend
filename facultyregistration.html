@@ -29,7 +29,7 @@
 <div class="container mt-5">
   <h2 class="text-center mb-4">Faculty Registration Form</h2>
   <div class="form-container">
-    <form action="#" method="POST" enctype="multipart/form-data">
+   
 
       <div class="mb-3">
         <label for="faculty_id" class="form-label">Faculty ID</label>
@@ -139,13 +139,15 @@ document.getElementById('facultyForm').addEventListener('submit', async function
   };
 
   try {
-    const response = await fetch("https://student-portal-backend-3fsy.onrender.com/api/faculty", {
+    const response = await fetch("http://localhost:8080/api/faculty", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(facultyData),
     });
 
     if (response.ok) {
+      localStorage.setItem("facultyId", facultyId);
+      
       alert("✅ Faculty registered successfully!");
       window.location.href = "facultydashboard.html";
     } else {

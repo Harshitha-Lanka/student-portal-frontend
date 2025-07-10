@@ -57,7 +57,7 @@
   const facultyId = localStorage.getItem("facultyId");
 
   async function loadCourses() {
-    const res = await fetch(`https://student-portal-backend-3fsy.onrender.com/api/courses/byFacultyId/${facultyId}`);
+    const res = await fetch(`http://localhost:8080/api/courses/byFacultyId/${facultyId}`);
     const courses = await res.json();
     const select = document.getElementById("courseSelect");
 
@@ -71,7 +71,7 @@
 
   document.getElementById("courseSelect").addEventListener("change", async function () {
     const courseId = this.value;
-    const res = await fetch(`https://student-portal-backend-3fsy.onrender.com/api/enrollments/studentsByCourse/${courseId}`);
+    const res = await fetch(`http://localhost:8080/api/enrollments/studentsByCourse/${courseId}`);
     const students = await res.json();
 
     const tbody = document.getElementById("studentsMarksBody");
@@ -118,7 +118,7 @@
         type
       };
 
-      const res = await fetch("https://student-portal-backend-3fsy.onrender.com/api/marks/add", {
+      const res = await fetch("http://localhost:8080/api/marks/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
