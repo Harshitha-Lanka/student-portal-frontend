@@ -43,7 +43,7 @@
     // Load courses taught by this faculty
     async function loadCourses() {
       try {
-        const response = await fetch(`http://localhost:8080/api/courses/byFacultyId/${facultyId}`);
+        const response = await fetch(`https://student-portal-backend-smqg.onrender.com/api/courses/byFacultyId/${facultyId}`);
         const data = await response.json();
         const dropdown = document.getElementById("courseDropdown");
         dropdown.innerHTML = `<option selected disabled>-- Select Course --</option>`;
@@ -62,7 +62,7 @@
     // Load enrolled students when course is selected
     document.getElementById("courseDropdown").addEventListener("change", async function () {
       const courseId = this.value;
-      const response = await fetch(`http://localhost:8080/api/enrollments/studentsByCourse/${courseId}`);
+      const response = await fetch(`https://student-portal-backend-smqg.onrender.com/api/enrollments/studentsByCourse/${courseId}`);
       const students = await response.json();
       renderStudentCheckboxes(students);
     });
@@ -114,7 +114,7 @@
       }));
 
       try {
-        const response = await fetch("http://localhost:8080/api/attendance/mark", {
+        const response = await fetch("https://student-portal-backend-smqg.onrender.com/api/attendance/mark", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(attendanceData)

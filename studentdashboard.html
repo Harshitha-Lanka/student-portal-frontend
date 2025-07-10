@@ -135,7 +135,7 @@
 const studentId = localStorage.getItem("studentId");
 
 if (studentId) {
-  fetch(`http://localhost:8080/api/students/byStudentId/${studentId}`)
+  fetch(`https://student-portal-backend-smqg.onrender.com/api/students/byStudentId/${studentId}`)
     .then(response => response.json())
     .then(data => {
       document.getElementById('studentName').innerText = data.name;
@@ -158,7 +158,7 @@ if (studentId) {
 let courseMap = {};
 
 async function loadCourseMap() {
-  const res = await fetch("http://localhost:8080/api/courses");
+  const res = await fetch("https://student-portal-backend-smqg.onrender.com/api/courses");
   const courses = await res.json();
 
  courses.forEach(c => {
@@ -178,7 +178,7 @@ async function loadEnrolledCourses() {
   tableBody.innerHTML = "";
 
   try {
-    const response = await fetch(`http://localhost:8080/api/enrollments/student/${studentId}`);
+    const response = await fetch(`https://student-portal-backend-smqg.onrender.com/api/enrollments/student/${studentId}`);
     const enrollments = await response.json();
 
     if (enrollments.length === 0) {
@@ -217,7 +217,7 @@ async function loadStudentMarks() {
     // ⏳ Wait for course map to fully load first
    
 
-    const response = await fetch(`http://localhost:8080/api/marks/student/${studentId}`);
+    const response = await fetch(`https://student-portal-backend-smqg.onrender.com/api/marks/student/${studentId}`);
     const marksList = await response.json();
 
     if (marksList.length === 0) {
@@ -252,7 +252,7 @@ async function loadAttendancePercentage() {
   list.innerHTML = "";
 
   try {
-    const res = await fetch(`http://localhost:8080/api/attendance/percentage/${studentId}`);
+    const res = await fetch(`https://student-portal-backend-smqg.onrender.com/api/attendance/percentage/${studentId}`);
     const attendanceData = await res.json();
 
     if (attendanceData.length === 0) {
@@ -274,7 +274,7 @@ async function loadAttendancePercentage() {
 
 async function loadStudentNotices() {
   try {
-    const res = await fetch("http://localhost:8080/api/notices");
+    const res = await fetch("https://student-portal-backend-smqg.onrender.com/api/notices");
     const notices = await res.json();
 
     const list = document.getElementById("studentNoticesList");
